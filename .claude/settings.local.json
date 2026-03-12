@@ -46,7 +46,8 @@
       "Bash(npx next:*)",
       "Bash(curl:*)",
       "Bash(make typecheck:*)",
-      "Bash(cd /Users/senlin/Work/claude-log-viewer/server && make lint 2>&1 && make typecheck 2>&1 && make unittest 2>&1)"
+      "Bash(cd /Users/senlin/Work/claude-log-viewer/server && make lint 2>&1 && make typecheck 2>&1 && make unittest 2>&1)",
+      "Bash(npx eslint:*)"
     ]
   }
 }

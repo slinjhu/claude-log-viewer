@@ -1,10 +1,10 @@
 import type { SummaryEntry } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export function SummaryBanner({ entry }: { entry: SummaryEntry }) {
+export function ResultMessage({ entry }: { entry: SummaryEntry }) {
   const isError = entry.is_error;
   const durationSec = (entry.duration_ms / 1000).toFixed(1);
-  const cost = entry.total_cost_usd.toFixed(4);
+  const cost = entry.total_cost_usd?.toFixed(4) ?? "—";
   const u = entry.usage;
 
   return (
@@ -23,12 +23,14 @@ export function SummaryBanner({ entry }: { entry: SummaryEntry }) {
         <span className="text-muted-foreground">·</span>
         <span>${cost}</span>
       </div>
-      <div className="flex gap-4 text-xs text-muted-foreground">
-        <span>Input: {u.input_tokens.toLocaleString()}</span>
-        <span>Cache create: {u.cache_creation_input_tokens.toLocaleString()}</span>
-        <span>Cache read: {u.cache_read_input_tokens.toLocaleString()}</span>
-        <span>Output: {u.output_tokens.toLocaleString()}</span>
-      </div>
+      {u && (
+        <div className="flex gap-4 text-xs text-muted-foreground">
+          <span>Input: {u.input_tokens.toLocaleString()}</span>
+          <span>Cache create: {u.cache_creation_input_tokens.toLocaleString()}</span>
+          <span>Cache read: {u.cache_read_input_tokens.toLocaleString()}</span>
+          <span>Output: {u.output_tokens.toLocaleString()}</span>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import type { InitEntry } from "@/lib/types";
 
-export function InitBanner({ entry }: { entry: InitEntry }) {
+export function SystemMessage({ entry }: { entry: InitEntry }) {
   const d = entry.data;
   return (
     <div className="rounded-lg border bg-card p-4 text-sm">
