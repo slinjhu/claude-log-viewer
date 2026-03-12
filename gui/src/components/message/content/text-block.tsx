@@ -6,7 +6,7 @@ import { JsonButton } from "./json-button";
 import { ExpandableBlock } from "./expandable-block";
 
 export function TextBlock({ item }: { item: TextContent }) {
-  const preview = item.text.split("\n")[0].slice(0, 120);
+  const preview = item.text.replace(/\n/g, " ");
 
   return (
     <ExpandableBlock

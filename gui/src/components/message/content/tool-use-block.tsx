@@ -6,16 +6,31 @@ import type { ToolUseContent } from "@/lib/types";
 import { useTheme } from "@/components/theme-provider";
 import { JsonButton } from "./json-button";
 import { ExpandableBlock } from "./expandable-block";
+import { WriteBlock } from "./write-block";
 
 const ReactJson = dynamic(() => import("@smoosense/react-json-view"), {
   ssr: false,
 });
 
+function isWriteBlock(item: ToolUseContent): boolean {
+  if (item.name !== "Write") return false;
+  const keys = Object.keys(item.input);
+  return keys.length === 2 && keys.includes("file_path") && keys.includes("content");
+}
+
 export function ToolUseBlock({ item }: { item: ToolUseContent }) {
+  if (isWriteBlock(item)) {
+    return <WriteBlock item={item} />;
+  }
+
+  return <DefaultToolUseBlock item={item} />;
+}
+
+function DefaultToolUseBlock({ item }: { item: ToolUseContent }) {
   const { resolvedTheme } = useTheme();
   const jsonTheme = resolvedTheme === "dark" ? "monokai" : "rjv-default";
 
-  const preview = JSON.stringify(item.input).slice(0, 100);
+  const preview = JSON.stringify(item.input).replace(/\n/g, " ");
 
   return (
     <ExpandableBlock

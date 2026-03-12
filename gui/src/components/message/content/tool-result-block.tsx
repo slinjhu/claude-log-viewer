@@ -5,7 +5,7 @@ import { ExpandableBlock } from "./expandable-block";
 
 export function ToolResultBlock({ item }: { item: ToolResultContent }) {
   const isError = item.is_error === true;
-  const preview = (item.content ?? "").split("\n")[0].slice(0, 120);
+  const preview = (item.content ?? "").replace(/\n/g, " ");
 
   return (
     <ExpandableBlock

@@ -6,7 +6,7 @@ import { JsonButton } from "./json-button";
 import { ExpandableBlock } from "./expandable-block";
 
 export function ThinkingBlock({ item }: { item: ThinkingContent }) {
-  const preview = item.thinking.split("\n")[0].slice(0, 120);
+  const preview = item.thinking.replace(/\n/g, " ");
 
   return (
     <ExpandableBlock
