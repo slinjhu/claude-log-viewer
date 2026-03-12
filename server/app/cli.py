@@ -1,40 +1,46 @@
 """CLI entry point."""
 
+import socket
 import webbrowser
+from pathlib import Path
 from threading import Timer
+from urllib.parse import quote
 
 import click
 
 from app import create_app
 
 
-@click.group(invoke_without_command=True)
-@click.option("--version", is_flag=True, help="Show version and exit.")
-@click.pass_context
-def main(ctx: click.Context, version: bool) -> None:
-    """Claude SDK Log Viewer."""
-    if version:
-        from importlib.metadata import version as get_version
-
-        click.echo(f"claude-log-viewer {get_version('claude-log-viewer')}")
-        return
-
-    if ctx.invoked_subcommand is None:
-        ctx.invoke(serve)
+def find_free_port(host: str = "127.0.0.1") -> int:
+    """Find an available port."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((host, 0))
+        port: int = s.getsockname()[1]
+        return port
 
 
-@main.command()
+@click.command()
+@click.argument("logfile", type=click.Path(exists=True, dir_okay=False))
 @click.option("--host", default="127.0.0.1", help="Host to bind to.")
-@click.option("--port", default=8000, help="Port to bind to.")
+@click.option("--port", default=0, help="Port to bind to (0 = auto-find).")
 @click.option("--no-browser", is_flag=True, help="Don't open browser automatically.")
-def serve(host: str, port: int, no_browser: bool) -> None:
-    """Start the web server."""
-    app = create_app()
+def main(logfile: str, host: str, port: int, no_browser: bool) -> None:
+    """Claude SDK Log Viewer — view a JSONL log file.
+
+    LOGFILE is the path to a .jsonl log file.
+    """
+    log_path = Path(logfile).resolve()
+    if port == 0:
+        port = find_free_port(host)
+
+    app = create_app(log_path=log_path)
 
     if not no_browser:
-        url = f"http://{host}:{port}"
+        encoded = quote(str(log_path), safe="")
+        url = f"http://{host}:{port}/?file={encoded}"
         Timer(1.0, lambda: webbrowser.open(url)).start()
-        click.echo(f"Opening {url} in browser...")
+        click.echo(f"Serving {log_path}")
+        click.echo(f"Opening {url}")
 
     app.run(host=host, port=port)
 
